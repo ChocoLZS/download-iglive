@@ -36,6 +36,10 @@ struct Download {
     /// Don't download past segments
     #[clap(short, long)]
     live_only: bool,
+
+    /// Maximum time difference in seconds to guess past segments
+    #[clap(short, long)]
+    max_diff: Option<isize>,
 }
 
 /// Merge an already downloaded live stream into one file
@@ -66,6 +70,7 @@ async fn run(args: Args) -> Result<()> {
             let config = DownloadConfig {
                 dir: d.output,
                 segments,
+                max_diff: d.max_diff.unwrap_or(10),
             };
 
             // Download live stream

@@ -20,6 +20,7 @@ pub async fn download_reps_backwards(
     reps: impl IntoIterator<Item = (&Representation, ProgressBar)>,
     start_frame: usize,
     dir: impl AsRef<Path> + Send,
+    max_diff: isize,
 ) -> Result<()> {
     let futures: Vec<_> = reps
         .into_iter()
@@ -32,6 +33,7 @@ pub async fn download_reps_backwards(
                 start_frame,
                 dir.as_ref(),
                 pb,
+                max_diff
             )
         })
         .collect();
@@ -55,6 +57,7 @@ async fn download_backwards(
     start_frame: usize,
     dir: impl AsRef<Path>,
     pb: ProgressBar,
+    max_diff: isize
 ) -> Result<()> {
     let media_type = rep.media_type();
 
@@ -82,7 +85,7 @@ async fn download_backwards(
 
         let mut lower_bound = 0;
 
-        for x in OffsetRange::new(10, new_seed) {
+        for x in OffsetRange::new(max_diff, new_seed) {
             let t = latest_t - x;
             if t < lower_bound {
                 continue;

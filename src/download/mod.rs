@@ -33,6 +33,8 @@ pub struct DownloadConfig {
 
     /// Choose whether to download live segments or past segments.
     pub segments: DownloadSegments,
+    /// Maximum time difference in seconds to guess past segments.
+    pub max_diff: isize,
 }
 
 bitflags! {
@@ -140,6 +142,7 @@ pub async fn download(mpd_url: impl IntoUrl, config: DownloadConfig) -> Result<P
             [(video_rep, pb_video), (audio_rep, pb_audio)],
             manifest.start_frame,
             &dir_name,
+            config.max_diff,
         )));
     }
     future::join_all(futures)
